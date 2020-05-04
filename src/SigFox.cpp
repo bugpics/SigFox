@@ -177,7 +177,11 @@ int SIGFOXClass::send(unsigned char mess[], int len, bool rx)
     goto exit;
   }
 
-  for (i = 0; i < timeout/10; i++)
+  long int current;
+  current = millis();
+
+  //for (i = 0; i < timeout/10; i++)
+  while( millis() - current < timeout )
   {
     if (digitalRead(interrupt_pin) == 0) {
       status();
@@ -185,10 +189,16 @@ int SIGFOXClass::send(unsigned char mess[], int len, bool rx)
       break;
     }
     else {
-      digitalWrite(led_pin, HIGH);
-      delay(50);
-      digitalWrite(led_pin, LOW);
-      delay(50);
+      if (*waitingProcess != NULL) {
+        waitingProcess();
+      }
+      else {
+        digitalWrite(led_pin, HIGH);
+        delay(50);
+        digitalWrite(led_pin, LOW);
+        delay(50);
+      }
+
     }
   }
 
@@ -240,7 +250,10 @@ int SIGFOXClass::sendBit(bool value){
     }
   }
 
-  for (i = 0; i < timeout/10; i++)
+  long int current;
+  current = millis();
+  //for (i = 0; i < timeout/10; i++)
+  while( millis() - current < timeout )
   {
     if (digitalRead(interrupt_pin) == 0) {
       status();
@@ -248,10 +261,15 @@ int SIGFOXClass::sendBit(bool value){
       break;
     }
     else {
-      digitalWrite(led_pin, HIGH);
-      delay(50);
-      digitalWrite(led_pin, LOW);
-      delay(50);
+      if (*waitingProcess != NULL) {
+        waitingProcess();
+      }
+      else {
+        digitalWrite(led_pin, HIGH);
+        delay(50);
+        digitalWrite(led_pin, LOW);
+        delay(50);
+      }
     }
   }
   return 99; //default
